@@ -6,650 +6,490 @@
   <title>Umwelttechnik Lernseite</title>
   <style>
     :root{
-      --bg:#f3f6fb;
-      --card:#ffffff;
-      --text:#17324d;
-      --muted:#5f7388;
-      --primary:#1f5fa8;
-      --primary-dark:#17487f;
-      --accent:#f28c28;
-      --line:#d8e2ee;
-      --soft:#edf4fb;
-      --success:#1f8a55;
-      --shadow:0 10px 30px rgba(20, 48, 79, 0.08);
-      --radius:22px;
+      --bg:#f3f6fb; --card:#ffffff; --text:#17324d; --muted:#5f7388;
+      --primary:#1f5fa8; --primary-dark:#17487f; --accent:#f28c28;
+      --line:#d8e2ee; --soft:#edf4fb; --success:#1f8a55; --danger:#c0392b;
+      --shadow:0 10px 30px rgba(20,48,79,.08); --radius:22px;
     }
-
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
-    body{
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #eef4fa 0%, #f8fbfe 100%);
-      color:var(--text);
+    body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#eef4fa 0%,#f8fbfe 100%);color:var(--text)}
+    .app{max-width:1150px;margin:0 auto;padding:22px}
+    .hero{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border-radius:30px;padding:28px;box-shadow:var(--shadow);margin-bottom:24px}
+    .hero h1{margin:0 0 10px;font-size:clamp(30px,4vw,48px);line-height:1.05}
+    .hero p{margin:0;max-width:850px;line-height:1.6;color:rgba(255,255,255,.92);font-size:16px}
+    .view{display:none}.view.active{display:block}
+    .topic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:20px}
+    .topic-card,.summary-section,.cards-shell,.game-shell{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;border:1px solid var(--line)}
+    .topic-card h2{margin:0 0 10px;font-size:25px;line-height:1.2}
+    .topic-card p{margin:0 0 18px;color:var(--muted);line-height:1.6}
+    .button-row{display:flex;flex-wrap:wrap;gap:10px}
+    button{border:none;border-radius:16px;padding:12px 16px;font-size:15px;cursor:pointer;transition:.18s ease;font-weight:700}
+    button.primary{background:var(--primary);color:#fff} button.primary:hover{background:var(--primary-dark)}
+    button.secondary{background:#eef4fb;color:var(--text);border:1px solid var(--line)} button.secondary:hover{background:#e4eef9}
+    button.accent{background:var(--accent);color:#fff} button.accent:hover{filter:brightness(.96)}
+    button.danger{background:#fff1f0;color:var(--danger);border:1px solid #ffd0cb}
+    .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+    .topbar h2{margin:0 0 6px;font-size:clamp(26px,3vw,40px);line-height:1.1}
+    .topbar p{margin:0;color:var(--muted);line-height:1.6}
+    .summary-section{margin-bottom:16px}.summary-section h3{margin:0 0 14px;font-size:22px}.summary-section ul{margin:0;padding-left:22px}.summary-section li{margin:0 0 12px;line-height:1.7}
+    .pdf-frame-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.pdf-frame{width:100%;height:78vh;border:none;background:#fff}
+    .progress-row{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--muted);font-size:14px;margin-bottom:10px}
+    .progress{width:100%;height:10px;border-radius:999px;background:#e7eef7;overflow:hidden;margin-bottom:18px}.progress>div{height:100%;background:linear-gradient(90deg,var(--accent),#f5ad60);width:0;transition:.2s ease}
+    .flashcard{min-height:300px;background:linear-gradient(180deg,#f8fbfe,#edf4fb);border:1px solid var(--line);border-radius:28px;padding:28px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;margin-bottom:18px}
+    .flashcard small{display:block;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:16px;font-weight:700}.flashcard .text{font-size:clamp(23px,3vw,33px);line-height:1.35;font-weight:700}.flashcard .hint{margin-top:20px;color:var(--muted);font-size:14px}
+    .pill{display:inline-block;padding:8px 12px;border-radius:999px;background:#fff4e8;color:#9a5a11;font-size:13px;font-weight:700;margin-top:10px}
+    .footer-note{text-align:center;color:var(--muted);font-size:14px;margin-top:18px}
+    .game-info{color:var(--muted);line-height:1.6;margin:0 0 16px}
+    .flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:16px 0}
+    .slot{background:#f8fbfe;border:2px dashed #bed0e3;border-radius:18px;padding:14px;min-height:92px}
+    .slot.correct{border-color:var(--success);background:#eefaf4}.slot.wrong{border-color:var(--danger);background:#fff5f3}
+    .slot-number{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}.slot-value{font-size:18px;font-weight:800;margin-top:8px;min-height:24px}.slot-hint{font-size:13px;color:var(--muted);margin-top:8px}
+    select{width:100%;margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:white;color:var(--text);font-size:15px}
+    .result{font-weight:800;margin-top:14px}.result.ok{color:var(--success)}.result.bad{color:var(--danger)}
+    .mini-diagram{background:#f8fbfe;border:1px solid var(--line);border-radius:18px;padding:14px;line-height:1.7;margin:12px 0;color:var(--text)}
+
+    .diagram-card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+    .diagram-area{position:relative;width:100%;aspect-ratio:16/7;background:linear-gradient(180deg,#ffffff,#fbfdff);border-bottom:1px solid var(--line)}
+    .plant-svg{position:absolute;inset:0;width:100%;height:100%}
+    .dropzone{
+      position:absolute;transform:translate(-50%,-50%);width:11.5%;min-width:82px;min-height:38px;
+      border:2px dashed #2b69d1;border-radius:10px;background:rgba(255,255,255,.92);
+      display:flex;align-items:center;justify-content:center;text-align:center;padding:5px;
+      font-size:clamp(10px,1.1vw,14px);font-weight:800;color:var(--primary);
+      box-shadow:0 4px 12px rgba(31,95,168,.08)
     }
-
-    .app{
-      max-width:1100px;
-      margin:0 auto;
-      padding:22px;
+    .dropzone.empty::after{content:"";display:block}
+    .dropzone.selected{outline:3px solid rgba(242,140,40,.35)}
+    .dropzone.correct{border-color:var(--success);background:#eefaf4;color:var(--success)}
+    .dropzone.wrong{border-color:var(--danger);background:#fff5f3;color:var(--danger)}
+    .label-bank{padding:18px 20px;background:#fff}
+    .label-bank h3{margin:0 0 12px;font-size:18px}
+    .term-list{display:flex;flex-wrap:wrap;gap:10px}
+    .term-chip{
+      user-select:none;background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 15px;
+      box-shadow:0 4px 12px rgba(20,48,79,.06);cursor:pointer;font-weight:700;color:var(--text)
     }
+    .term-chip:hover{border-color:#8fb1df;background:#f8fbff}
+    .term-chip.active{background:#fff4e8;border-color:var(--accent);color:#9a5a11}
+    .term-chip.used{opacity:.38}
+    .legend{display:flex;flex-wrap:wrap;gap:18px;align-items:center;color:var(--muted);font-size:13px;margin-top:14px}
+    .legend span{display:inline-flex;align-items:center;gap:7px}
+    .sample-box{width:32px;height:20px;border:2px dashed #2b69d1;border-radius:5px}
+    .sample-box.ok{border-color:var(--success);background:#eefaf4}
+    .sample-box.bad{border-color:var(--danger);background:#fff5f3}
 
-    .hero{
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color:#fff;
-      border-radius:30px;
-      padding:28px;
-      box-shadow: var(--shadow);
-      margin-bottom:24px;
-    }
-
-    .hero h1{
-      margin:0 0 10px 0;
-      font-size: clamp(30px, 4vw, 48px);
-      line-height:1.05;
-    }
-
-    .hero p{
-      margin:0;
-      max-width:760px;
-      line-height:1.6;
-      color:rgba(255,255,255,0.92);
-      font-size:16px;
-    }
-
-    .view{display:none}
-    .view.active{display:block}
-
-    .topic-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-      gap:20px;
-    }
-
-    .topic-card{
-      background:var(--card);
-      border-radius:var(--radius);
-      box-shadow: var(--shadow);
-      padding:22px;
-      border:1px solid var(--line);
-    }
-
-    .topic-card h2{
-      margin:0 0 10px;
-      font-size:26px;
-      line-height:1.2;
-    }
-
-    .topic-card p{
-      margin:0 0 18px;
-      color:var(--muted);
-      line-height:1.6;
-    }
-
-    .button-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    button{
-      border:none;
-      border-radius:16px;
-      padding:12px 16px;
-      font-size:15px;
-      cursor:pointer;
-      transition:0.18s ease;
-      font-weight:700;
-    }
-
-    button.primary{
-      background:var(--primary);
-      color:#fff;
-    }
-
-    button.primary:hover{background:var(--primary-dark)}
-
-    button.secondary{
-      background:#eef4fb;
-      color:var(--text);
-      border:1px solid var(--line);
-    }
-
-    button.secondary:hover{
-      background:#e4eef9;
-    }
-
-    button.accent{
-      background:var(--accent);
-      color:#fff;
-    }
-
-    button.accent:hover{
-      filter:brightness(0.96);
-    }
-
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:16px;
-      margin-bottom:18px;
-      flex-wrap:wrap;
-    }
-
-    .topbar h2{
-      margin:0 0 6px;
-      font-size: clamp(26px, 3vw, 40px);
-      line-height:1.1;
-    }
-
-    .topbar p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.6;
-    }
-
-    .summary-section{
-      background:var(--card);
-      border-radius:var(--radius);
-      border:1px solid var(--line);
-      box-shadow: var(--shadow);
-      padding:22px;
-      margin-bottom:16px;
-    }
-
-    .summary-section h3{
-      margin:0 0 14px;
-      font-size:22px;
-    }
-
-    .summary-section ul{
-      margin:0;
-      padding-left:22px;
-    }
-
-    .summary-section li{
-      margin:0 0 12px;
-      line-height:1.7;
-    }
-
-    .pdf-frame-wrap{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-
-    .pdf-frame{
-      width:100%;
-      height:78vh;
-      border:none;
-      background:#fff;
-    }
-
-    .cards-shell{
-      background:var(--card);
-      border-radius:var(--radius);
-      border:1px solid var(--line);
-      box-shadow: var(--shadow);
-      padding:22px;
-    }
-
-    .progress-row{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:center;
-      color:var(--muted);
-      font-size:14px;
-      margin-bottom:10px;
-    }
-
-    .progress{
-      width:100%;
-      height:10px;
-      border-radius:999px;
-      background:#e7eef7;
-      overflow:hidden;
-      margin-bottom:18px;
-    }
-
-    .progress > div{
-      height:100%;
-      background:linear-gradient(90deg, var(--accent), #f5ad60);
-      width:0;
-      transition:0.2s ease;
-    }
-
-    .flashcard{
-      min-height:300px;
-      background:linear-gradient(180deg, #f8fbfe 0%, #edf4fb 100%);
-      border:1px solid var(--line);
-      border-radius:28px;
-      padding:28px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      cursor:pointer;
-      margin-bottom:18px;
-    }
-
-    .flashcard small{
-      display:block;
-      text-transform:uppercase;
-      letter-spacing:0.18em;
-      color:var(--muted);
-      margin-bottom:16px;
-      font-weight:700;
-    }
-
-    .flashcard .text{
-      font-size: clamp(24px, 3vw, 34px);
-      line-height:1.35;
-      font-weight:700;
-    }
-
-    .flashcard .hint{
-      margin-top:20px;
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    .pill{
-      display:inline-block;
-      padding:8px 12px;
-      border-radius:999px;
-      background:#fff4e8;
-      color:#9a5a11;
-      font-size:13px;
-      font-weight:700;
-      margin-top:10px;
-    }
-
-    .footer-note{
-      text-align:center;
-      color:var(--muted);
-      font-size:14px;
-      margin-top:18px;
-    }
-
-    @media (max-width:700px){
-      .app{padding:14px}
-      .hero{padding:22px;border-radius:24px}
-      .topic-card, .summary-section, .cards-shell{padding:18px}
-      .flashcard{padding:20px; min-height:260px}
-      .pdf-frame{height:72vh}
-      button{width:100%}
-      .button-row{display:grid; grid-template-columns:1fr}
-    }
+    @media(max-width:700px){.app{padding:14px}.hero{padding:22px;border-radius:24px}.topic-card,.summary-section,.cards-shell,.game-shell{padding:18px}.flashcard{padding:20px;min-height:260px}.pdf-frame{height:72vh}button{width:100%}.button-row{display:grid;grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="app">
-    <section class="hero">
-      <h1>Umwelttechnik Lernseite</h1>
-      <p>
-        Pro Thema gibt es drei Bereiche: das Original-PDF zum kompletten Öffnen,
-        eine vollständige Zusammenfassung zum Lesen und einen Karteikartenmodus
-        zum aktiven Lernen auf dem Handy oder am PC.
-      </p>
-    </section>
+<div class="app">
+  <section class="hero">
+    <h1>Umwelttechnik Lernseite</h1>
+    <p>Pro Thema: Original-PDF öffnen, Zusammenfassung lesen, Karteikarten lernen. Für den Aufbau der Kläranlage gibt es zusätzlich eine Zuordnungsübung.</p>
+  </section>
 
-    <section id="homeView" class="view active">
-      <div class="topic-grid">
-        <article class="topic-card">
-          <h2>Einführung &amp; juristische Grundlagen</h2>
-          <p>
-            Lernbereich mit Original-PDF, vollständiger Lesefassung und Karteikarten
-            zu Hierarchie der Umweltgesetzgebung, Basler Übereinkommen,
-            EU-Rechtsakten, weiteren Rechtsnormen und strafrechtlichem Umweltschutz.
-          </p>
-          <div class="button-row">
-            <button class="primary" onclick="openTopic('recht','summary')">Zusammenfassung lesen</button>
-            <button class="secondary" onclick="openTopic('recht','cards')">Karteikarten lernen</button>
-            <button class="accent" onclick="openTopic('recht','pdf')">PDF komplett öffnen</button>
-          </div>
-        </article>
+  <section id="homeView" class="view active">
+    <div id="topicGrid" class="topic-grid"></div>
+    <div class="footer-note">Alle PDFs müssen im gleichen Ordner wie diese HTML-Datei liegen.</div>
+  </section>
 
-        <article class="topic-card">
-          <h2>Altlastensanierung</h2>
-          <p>
-            Lernbereich mit Original-PDF, vollständiger Lesefassung und Karteikarten
-            zu Sanierungszielen, Sanierungsablauf, Maßnahmenarten und
-            Bodenreinigungsverfahren.
-          </p>
-          <div class="button-row">
-            <button class="primary" onclick="openTopic('altlasten','summary')">Zusammenfassung lesen</button>
-            <button class="secondary" onclick="openTopic('altlasten','cards')">Karteikarten lernen</button>
-            <button class="accent" onclick="openTopic('altlasten','pdf')">PDF komplett öffnen</button>
-          </div>
-        </article>
+  <section id="topicView" class="view">
+    <div class="topbar">
+      <div>
+        <h2 id="topicTitle"></h2>
+        <p id="topicSubtitle"></p>
       </div>
-      <div class="footer-note">Lege diese Datei in denselben Ordner wie die beiden PDFs.</div>
-    </section>
+      <div class="button-row"><button class="secondary" onclick="goHome()">Zurück zur Startseite</button></div>
+    </div>
+    <div id="summaryPanel"></div>
+    <div id="cardsPanel" style="display:none"></div>
+    <div id="pdfPanel" style="display:none"></div>
+    <div id="gamePanel" style="display:none"></div>
+  </section>
+</div>
 
-    <section id="topicView" class="view">
-      <div class="topbar">
-        <div>
-          <h2 id="topicTitle"></h2>
-          <p id="topicSubtitle"></p>
-        </div>
-        <div class="button-row">
-          <button class="secondary" onclick="goHome()">Zurück zur Startseite</button>
-        </div>
+<script>
+const topics = {
+  recht: {
+    title:"Einführung & juristische Grundlagen",
+    pdf:"01_Einfuerhung_und_jur._Grundlagen.pdf",
+    teaser:"Hierarchie der Umweltgesetzgebung, Basler Übereinkommen, EU-Rechtsakte, untergesetzliches Regelwerk und Umweltstrafrecht.",
+    hasGame:false,
+    summary:[
+      ["1. Hierarchie der Umweltgesetzgebung",["Die Umweltgesetzgebung ist hierarchisch aufgebaut: Völkerrecht, EU-Recht, Bundesrecht und Landesrecht.","Höherrangiges Recht setzt den Rahmen für nachrangiges Recht.","Klausurrelevant ist die Einordnung, auf welcher Ebene eine Regelung entsteht und wie sie darunter wirkt."]],
+      ["2. Völkerrecht – Basler Übereinkommen",["Beispiel für völkerrechtliche Regelungen im Umweltbereich.","Regelt die Kontrolle der grenzüberschreitenden Verbringung gefährlicher Abfälle und deren Entsorgung.","Wichtig als Beispiel für internationales Abfallrecht."]],
+      ["3. Rechtsakte der EU",["Verordnung: gilt unmittelbar rechtsverbindlich in allen Mitgliedstaaten.","Richtlinie: muss fristgerecht in nationales Recht umgesetzt werden.","Beschluss: verbindlich für die adressierten Staaten oder Unternehmen.","Empfehlung: keine bindende Wirkung."]],
+      ["4. Weitere Rechtsnormen",["Landesrecht darf über Bundesrecht hinausgehen, darf ihm aber nicht widersprechen.","Untergesetzliches Regelwerk konkretisiert Gesetze, z. B. technische Regeln, TA Luft, TA Lärm und GUV-Richtlinien."]],
+      ["5. Strafrechtlicher Umweltschutz",["Der 29. Abschnitt des StGB behandelt Straftaten gegen die Umwelt.","Beispiele: Gewässerverunreinigung, Bodenverunreinigung, Luftverunreinigung, unerlaubter Umgang mit Abfällen, unerlaubtes Betreiben von Anlagen und Umgang mit gefährlichen Stoffen."]]
+    ],
+    cards:[
+      ["Wie ist die Hierarchie der Umweltgesetzgebung aufgebaut?","Völkerrecht → EU-Recht → Bundesrecht → Landesrecht."],
+      ["Was regelt das Basler Übereinkommen?","Die grenzüberschreitende Verbringung gefährlicher Abfälle und deren Entsorgung."],
+      ["Was ist eine EU-Verordnung?","Sie gilt unmittelbar rechtsverbindlich in allen Mitgliedstaaten."],
+      ["Was ist eine EU-Richtlinie?","Sie muss fristgerecht in nationales Recht umgesetzt werden."],
+      ["Was ist eine EU-Empfehlung?","Sie hat keine bindende Wirkung."],
+      ["Was ist untergesetzliches Regelwerk?","Technische und verwaltungsnahe Regelwerke, z. B. TA Luft, TA Lärm und technische Regeln."],
+      ["Nenne drei Umweltstraftaten.","Gewässerverunreinigung, Bodenverunreinigung und Luftverunreinigung."]
+    ]
+  },
+  altlasten: {
+    title:"Altlastensanierung",
+    pdf:"02_Altlastensanierung.pdf",
+    teaser:"Sanierungsziele, Sanierungsuntersuchung, Sanierungskonzept, Sanierungsplan, Maßnahmen und Bodenreinigungsverfahren.",
+    hasGame:false,
+    summary:[
+      ["1. Ziele der Sanierung",["Beseitigung oder Verminderung der Schadstoffe durch Dekontaminationsmaßnahmen.","Langfristige Verhinderung oder Verminderung der Ausbreitung durch Sicherungsmaßnahmen.","Beseitigung oder Verminderung schädlicher Veränderungen der Bodenbeschaffenheit."]],
+      ["2. Sanierungsuntersuchung",["Ermittelt alle wesentlichen Randbedingungen.","Bildet die Grundlage für das Sanierungskonzept."]],
+      ["3. Sanierungskonzept",["Beschreibt Sanierungsziele, Flächen, Teilflächen und Zonen.","Bewertet Eignung der Maßnahmen, Schutz- und Überwachungsmaßnahmen, Zulassungserfordernisse, Kosten und Arbeitsschutz."]],
+      ["4. Sanierungsplan",["Planerisch durchgearbeitete Fassung als Grundlage des Genehmigungsverfahrens.","Enthält Gefährdungsabschätzung, Nutzung, Nachsorge und Langzeitüberwachung."]],
+      ["5. Maßnahmen und Verfahren",["Verwaltungsmaßnahmen, Sicherungsmaßnahmen, Umlagerung, Dekontamination und Selbstreinigung mit Überwachung.","Verfahren: elektrokinetisch, thermisch, chemisch-physikalisch, Bodenwäsche, Bodenluftabsaugung, Immobilisierung und mikrobiologisch."]]
+    ],
+    cards:[
+      ["Welche drei Zielrichtungen hat die Altlastensanierung?","Dekontamination, Sicherung gegen Ausbreitung und Verminderung schädlicher Bodenveränderungen."],
+      ["Was bedeutet Dekontamination?","Schadstoffe werden beseitigt oder vermindert."],
+      ["Was ist das Ziel von Sicherungsmaßnahmen?","Die Ausbreitung von Schadstoffen verhindern oder vermindern."],
+      ["Was passiert in der Sanierungsuntersuchung?","Alle wesentlichen Randbedingungen werden ermittelt."],
+      ["Wozu dient der Sanierungsplan?","Als konkrete genehmigungsfähige Ausarbeitung des Sanierungskonzepts."],
+      ["Was ist Umlagerung?","Schadstoffhaltiges Material wird ausgebaut und an anderer Stelle wieder eingebaut."],
+      ["Was bedeutet in situ?","Behandlung am Ort der Belastung."]
+    ]
+  },
+  klaeranlage: {
+    title:"Aufbau und Funktion kommunaler Kläranlagen",
+    pdf:"Kläranlage.pdf",
+    teaser:"Aufbau einer kommunalen Kläranlage mit Vorklärung. Wichtig: Begriffe im Fließschema richtig zuordnen.",
+    hasGame:true,
+    summary:[
+      ["1. Grundidee des Fließschemas",["Das Abwasser fließt vom Zulauf über mechanische und biologische Reinigungsstufen bis zum Ablauf.","Im Schema werden außerdem Schlammströme dargestellt: Primärschlamm, Überschussschlamm und Rücklaufschlamm.","Die Anlage enthält eine Vorklärung, biologische Reinigung im Belebungsbecken und eine Nachklärung."]],
+      ["2. Wasserlinie – Reihenfolge",["Zulauf: Eintritt des Abwassers in die Kläranlage.","Regenentlastung: entlastet die Anlage bei starkem Regen bzw. hohen Zuflüssen.","Rechen: entfernt grobe Stoffe aus dem Abwasser.","Sandfang: entfernt mineralische Bestandteile wie Sand.","Vorklärbecken: absetzbare Stoffe sinken ab, Primärschlamm entsteht.","Belebungsbecken mit Belüftung: biologische Reinigung durch Mikroorganismen, Sauerstoff wird eingetragen.","Nachklärbecken: trennt Belebtschlamm vom gereinigten Wasser.","Ablauf: gereinigtes Wasser verlässt die Anlage."]],
+      ["3. Schlammstrom",["Primärschlamm aus der Vorklärung und Überschussschlamm aus dem biologischen Prozess werden der Schlammbehandlung zugeführt.","Rücklaufschlamm wird aus der Nachklärung zurück ins Belebungsbecken geführt, damit genügend Mikroorganismen vorhanden sind.","Die Schlammbehandlung besteht im Schema aus Voreindicker, Faulraum, Nacheindicker, Schlammpresse und Schlammentsorgung."]],
+      ["4. Prüfungsrelevante Zuordnung",["Du solltest die Begriffe aus dem Bild in der richtigen Reihenfolge der Wasserlinie zuordnen können.","Zusätzlich solltest du erklären können, welche Teile zur Schlammbehandlung gehören und was Rücklaufschlamm bedeutet."]]
+    ],
+    cards:[
+      ["Welche Station kommt direkt nach dem Zulauf?","Die Regenentlastung."],
+      ["Welche Aufgabe hat der Rechen?","Er entfernt grobe Stoffe aus dem Abwasser."],
+      ["Welche Aufgabe hat der Sandfang?","Er entfernt mineralische Bestandteile wie Sand."],
+      ["Welche Funktion hat das Vorklärbecken?","Absetzbare Stoffe sinken ab; Primärschlamm entsteht."],
+      ["Wo findet die biologische Reinigung statt?","Im Belebungsbecken."],
+      ["Warum wird das Belebungsbecken belüftet?","Damit Mikroorganismen Sauerstoff für den biologischen Abbau erhalten."],
+      ["Welche Aufgabe hat das Nachklärbecken?","Es trennt Belebtschlamm vom gereinigten Wasser."],
+      ["Was ist Rücklaufschlamm?","Schlamm aus der Nachklärung, der zurück ins Belebungsbecken geführt wird."],
+      ["Welche Stationen gehören zur Schlammbehandlung?","Voreindicker, Faulraum, Nacheindicker, Schlammpresse und Schlammentsorgung."],
+      ["Wie lautet die Wasserlinie im Schema?","Zulauf → Regenentlastung → Rechen → Sandfang → Vorklärbecken → Belebungsbecken → Nachklärbecken → Ablauf."]
+    ],
+    gameTerms:["Zulauf","Regenentlastung","Rechen","Sandfang","Vorklärbecken","Belebungsbecken","Belüftung","Nachklärbecken","Ablauf","Rücklaufschlamm","Voreindicker","Faulraum","Nacheindicker","Schlammpresse","Schlammentsorgung"],
+    gameSlots:[
+      ["Zulauf","Start: Abwasser tritt in die Anlage ein."],
+      ["Regenentlastung","Entlastung bei starkem Regen / hohem Zufluss."],
+      ["Rechen","Entfernung grober Stoffe."],
+      ["Sandfang","Entfernung mineralischer Stoffe wie Sand."],
+      ["Vorklärbecken","Absetzbare Stoffe sinken ab; Primärschlamm entsteht."],
+      ["Belebungsbecken","Biologische Reinigung durch Mikroorganismen."],
+      ["Belüftung","Sauerstoffeintrag im Belebungsbecken."],
+      ["Nachklärbecken","Trennung von Belebtschlamm und gereinigtem Wasser."],
+      ["Ablauf","Gereinigtes Wasser verlässt die Anlage."],
+      ["Rücklaufschlamm","Schlamm wird aus der Nachklärung zurück ins Belebungsbecken geführt."],
+      ["Voreindicker","Beginn der Schlammbehandlung."],
+      ["Faulraum","Stabilisierung/Faulung des Schlamms."],
+      ["Nacheindicker","Weitere Eindickung nach der Faulung."],
+      ["Schlammpresse","Mechanische Entwässerung des Schlamms."],
+      ["Schlammentsorgung","Ende der Schlammbehandlung."]
+    ]
+  },
+  abwasser: {
+    title:"Abwasserreinigung – Inhaltsstoffe",
+    pdf:"Abwasserreinigung.pdf",
+    teaser:"Zehrstoffe, Nährstoffe und Störstoffe im Abwasser sowie deren Wirkungen auf Gewässer und Reinigungsprozesse.",
+    hasGame:false,
+    summary:[
+      ["1. Zehrstoffe",["Beispiele sind Glucose und Harnsäure.","Zehrstoffe sind biologisch abbaubar.","Ihr Abbau verbraucht Sauerstoff. Dadurch sinkt der Sauerstoffgehalt in Gewässern.","Ein starker Sauerstoffverbrauch kann in Gewässern zu Fischsterben führen.","Anaerobe Abbauprozesse können zu Geruchsbelastungen führen."]],
+      ["2. Nährstoffe",["Beispiele sind Stickstoff- und Phosphorverbindungen.","Nährstoffe fördern das Wachstum von Pflanzen und Algen.","Das verstärkte Wachstum wird als Eutrophierung bezeichnet.","Besonders in stehenden Gewässern ist Eutrophierung problematisch; auch im Meer kann sie sich durch verstärktes Algenwachstum bemerkbar machen.","Aus biochemischen Stoffwechselprozessen kann H₂S entstehen: problematisch wegen Geruch, Toxizität und Korrosivität."]],
+      ["3. Störstoffe",["Beispiele sind Salze, Fette, Öle, Tone und Sand.","Störstoffe können auf Mikroorganismen toxisch wirken.","Sie können außerdem den Verfahrensablauf der Abwasserreinigung stören."]]
+    ],
+    cards:[
+      ["Was sind Beispiele für Zehrstoffe?","Glucose und Harnsäure."],
+      ["Sind Zehrstoffe biologisch abbaubar?","Ja, sie sind biologisch abbaubar."],
+      ["Warum sind Zehrstoffe problematisch?","Ihr Abbau verbraucht Sauerstoff und senkt den Sauerstoffgehalt im Gewässer."],
+      ["Was kann Sauerstoffmangel im Gewässer verursachen?","Fischsterben."],
+      ["Was kann bei anaerobem Abbau entstehen?","Geruchsbelastungen."],
+      ["Was sind Beispiele für Nährstoffe?","Stickstoff- und Phosphorverbindungen."],
+      ["Was bedeutet Eutrophierung?","Verstärktes Wachstum von Pflanzen und Algen durch Nährstoffeintrag."],
+      ["Wo ist Eutrophierung besonders problematisch?","Besonders in stehenden Gewässern; auch im Meer durch verstärktes Algenwachstum."],
+      ["Warum ist H₂S problematisch?","Wegen Geruch, Toxizität und Korrosivität."],
+      ["Was sind Beispiele für Störstoffe?","Salze, Fette, Öle, Tone und Sand."],
+      ["Wie wirken Störstoffe auf Mikroorganismen?","Sie können toxisch wirken."],
+      ["Was können Störstoffe in der Kläranlage stören?","Den Verfahrensablauf der Abwasserreinigung."]
+    ]
+  }
+};
+
+let currentTopicKey=null,currentMode="summary",cardIndex=0,showAnswer=false;
+
+function initHome(){
+  const grid=document.getElementById("topicGrid");
+  grid.innerHTML=Object.keys(topics).map(key=>{
+    const t=topics[key];
+    return `<article class="topic-card">
+      <h2>${t.title}</h2>
+      <p>${t.teaser}</p>
+      <div class="button-row">
+        <button class="primary" onclick="openTopic('${key}','summary')">Zusammenfassung lesen</button>
+        <button class="secondary" onclick="openTopic('${key}','cards')">Karteikarten lernen</button>
+        ${t.hasGame?`<button class="secondary" onclick="openTopic('${key}','game')">Zuordnung üben</button>`:""}
+        <button class="accent" onclick="openTopic('${key}','pdf')">PDF komplett öffnen</button>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function openTopic(topicKey,mode){
+  currentTopicKey=topicKey;currentMode=mode;cardIndex=0;showAnswer=false;
+  document.getElementById("homeView").classList.remove("active");
+  document.getElementById("topicView").classList.add("active");
+  document.getElementById("topicTitle").textContent=topics[topicKey].title;
+  renderMode();
+}
+
+function goHome(){document.getElementById("topicView").classList.remove("active");document.getElementById("homeView").classList.add("active");}
+
+function navButtons(){
+  const t=topics[currentTopicKey];
+  return `<div class="button-row" style="margin-bottom:16px">
+    <button class="${currentMode==='summary'?'primary':'secondary'}" onclick="switchMode('summary')">Zusammenfassung</button>
+    <button class="${currentMode==='cards'?'primary':'secondary'}" onclick="switchMode('cards')">Karteikarten</button>
+    ${t.hasGame?`<button class="${currentMode==='game'?'primary':'secondary'}" onclick="switchMode('game')">Zuordnung üben</button>`:""}
+    <button class="${currentMode==='pdf'?'primary':'accent'}" onclick="switchMode('pdf')">PDF öffnen</button>
+  </div>`;
+}
+
+function renderMode(){
+  const t=topics[currentTopicKey];
+  ["summaryPanel","cardsPanel","pdfPanel","gamePanel"].forEach(id=>{document.getElementById(id).style.display="none";});
+  if(currentMode==="summary"){
+    document.getElementById("topicSubtitle").textContent="Vollständige Lernzusammenfassung zum Lesen.";
+    const p=document.getElementById("summaryPanel");p.style.display="block";
+    p.innerHTML=navButtons()+t.summary.map(s=>`<div class="summary-section"><h3>${s[0]}</h3><ul>${s[1].map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+  }
+  if(currentMode==="cards"){
+    document.getElementById("topicSubtitle").textContent="Karteikartenmodus für das aktive Wiederholen.";
+    document.getElementById("cardsPanel").style.display="block";renderCardsPanel();
+  }
+  if(currentMode==="pdf"){
+    document.getElementById("topicSubtitle").textContent="Original-PDF direkt öffnen oder in der Seite ansehen.";
+    const p=document.getElementById("pdfPanel");p.style.display="block";
+    p.innerHTML=navButtons()+`<div class="button-row" style="margin-bottom:16px"><button class="accent" onclick="window.open('${t.pdf}','_blank')">PDF in neuem Tab öffnen</button></div><div class="pdf-frame-wrap"><iframe class="pdf-frame" src="${t.pdf}"></iframe></div>`;
+  }
+  if(currentMode==="game"){
+    document.getElementById("topicSubtitle").textContent="Begriffe aus dem Kläranlagen-Fließschema zuordnen.";
+    document.getElementById("gamePanel").style.display="block";renderGamePanel();
+  }
+}
+
+function switchMode(mode){currentMode=mode;cardIndex=0;showAnswer=false;renderMode();}
+
+function renderCardsPanel(){
+  const t=topics[currentTopicKey],total=t.cards.length,progress=((cardIndex+1)/total)*100,pair=t.cards[cardIndex];
+  document.getElementById("cardsPanel").innerHTML=navButtons()+`<div class="cards-shell">
+    <div class="progress-row"><span>Karte ${cardIndex+1} von ${total}</span><span>${Math.round(progress)}%</span></div>
+    <div class="progress"><div style="width:${progress}%"></div></div>
+    <div class="flashcard" onclick="flipCard()"><small>${showAnswer?"Antwort":"Frage"}</small><div class="text">${showAnswer?pair[1]:pair[0]}</div><div class="hint">Zum Umdrehen antippen</div></div>
+    <div class="button-row"><button class="secondary" onclick="prevCard()">Vorherige Karte</button><button class="primary" onclick="flipCard()">Umdrehen</button><button class="accent" onclick="nextCard()">Nächste Karte</button></div>
+    <div class="pill">Alle Karteikarten stammen aus dem jeweiligen PDF-Thema.</div>
+  </div>`;
+}
+function flipCard(){showAnswer=!showAnswer;renderCardsPanel();}
+function nextCard(){cardIndex=(cardIndex+1)%topics[currentTopicKey].cards.length;showAnswer=false;renderCardsPanel();}
+function prevCard(){cardIndex=(cardIndex-1+topics[currentTopicKey].cards.length)%topics[currentTopicKey].cards.length;showAnswer=false;renderCardsPanel();}
+
+function renderGamePanel(){
+  const t=topics[currentTopicKey];
+  const coords=[
+    [8,23],[19,23],[28,23],[41,23],[55,23],[70,23],[84,23],
+    [9,52],[23,52],[58,52],
+    [38,77],[50,77],[61,77],[72,77],[84,77]
+  ];
+
+  document.getElementById("gamePanel").innerHTML=navButtons()+`<div class="game-shell">
+    <p class="game-info">
+      Ziehe einen Begriff unten aus der Liste in das passende Feld im Schema. Auf dem Handy geht es auch per Tippen:
+      erst Begriff antippen, dann das passende Feld antippen.
+    </p>
+
+    <div class="diagram-card">
+      <div class="diagram-area">
+        <svg class="plant-svg" viewBox="0 0 1600 700" preserveAspectRatio="none" aria-label="Schema Kläranlage">
+          <defs>
+            <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#1464d2"></path>
+            </marker>
+            <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#202020"></path>
+            </marker>
+            <marker id="arrowOlive" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#7f8000"></path>
+            </marker>
+          </defs>
+
+          <!-- Wasserlinie blau -->
+          <line x1="35" y1="250" x2="110" y2="250" stroke="#1464d2" stroke-width="6" marker-end="url(#arrowBlue)"/>
+          <rect x="115" y="225" width="90" height="50" fill="white" stroke="#111" stroke-width="3"/>
+          <line x1="205" y1="250" x2="310" y2="250" stroke="#1464d2" stroke-width="6" marker-end="url(#arrowBlue)"/>
+          <line x1="350" y1="210" x2="320" y2="290" stroke="#111" stroke-width="4"/>
+          <line x1="358" y1="210" x2="328" y2="290" stroke="#1464d2" stroke-width="4"/>
+          <line x1="360" y1="250" x2="430" y2="250" stroke="#1464d2" stroke-width="6" marker-end="url(#arrowBlue)"/>
+          <rect x="440" y="225" width="90" height="50" fill="white" stroke="#111" stroke-width="3"/>
+          <line x1="530" y1="250" x2="610" y2="250" stroke="#1464d2" stroke-width="6" marker-end="url(#arrowBlue)"/>
+
+          <!-- Vorklärbecken -->
+          <path d="M620 225 L850 225 L850 275 L700 275 L660 340 L620 275 Z" fill="white" stroke="#111" stroke-width="3"/>
+          <line x1="850" y1="250" x2="940" y2="250" stroke="#1464d2" stroke-width="6" marker-end="url(#arrowBlue)"/>
+
+          <!-- Belebungsbecken -->
+          <rect x="950" y="225" width="220" height="70" fill="white" stroke="#111" stroke-width="3"/>
+          <polygon points="1010,195 1040,195 1025,240" fill="#b8b8b8"/>
+          <line x1="1170" y1="250" x2="1240" y2="250" stroke="#1464d2" stroke-width="6" marker-end="url(#arrowBlue)"/>
+
+          <!-- Nachklärbecken -->
+          <path d="M1250 225 L1450 225 L1450 275 L1320 275 L1285 340 L1250 275 Z" fill="white" stroke="#111" stroke-width="3"/>
+          <line x1="1450" y1="250" x2="1550" y2="250" stroke="#1464d2" stroke-width="6" marker-end="url(#arrowBlue)"/>
+
+          <!-- Schlamm / Rücklauf oliv -->
+          <path d="M530 315 L610 315 L610 310" fill="none" stroke="#808000" stroke-width="5" marker-end="url(#arrowOlive)"/>
+          <path d="M1265 325 L1265 420 L520 420 L520 300" fill="none" stroke="#808000" stroke-width="5" marker-end="url(#arrowOlive)"/>
+          <path d="M930 420 L930 300" fill="none" stroke="#808000" stroke-width="5" marker-end="url(#arrowOlive)"/>
+
+          <!-- Primär-/Überschussschlamm nach unten -->
+          <line x1="660" y1="340" x2="660" y2="460" stroke="#222" stroke-width="5" marker-end="url(#arrowBlack)"/>
+
+          <!-- Schlammbehandlung schwarz -->
+          <path d="M630 490 L690 490 L660 565 Z" fill="white" stroke="#111" stroke-width="3"/>
+          <line x1="690" y1="525" x2="790" y2="525" stroke="#222" stroke-width="4" marker-end="url(#arrowBlack)"/>
+          <rect x="800" y="495" width="110" height="60" fill="#111" stroke="#111" stroke-width="3"/>
+          <line x1="910" y1="525" x2="1010" y2="525" stroke="#222" stroke-width="4" marker-end="url(#arrowBlack)"/>
+          <path d="M1015 490 L1075 490 L1045 565 Z" fill="white" stroke="#111" stroke-width="3"/>
+          <line x1="1075" y1="525" x2="1200" y2="525" stroke="#222" stroke-width="4" marker-end="url(#arrowBlack)"/>
+          <g stroke="#111" stroke-width="4">
+            <line x1="1210" y1="490" x2="1210" y2="560"/><line x1="1222" y1="490" x2="1222" y2="560"/>
+            <line x1="1234" y1="490" x2="1234" y2="560"/><line x1="1246" y1="490" x2="1246" y2="560"/>
+            <line x1="1258" y1="490" x2="1258" y2="560"/>
+          </g>
+          <line x1="1260" y1="525" x2="1450" y2="525" stroke="#222" stroke-width="4" marker-end="url(#arrowBlack)"/>
+        </svg>
+
+        ${t.gameSlots.map((s,i)=>`<div class="dropzone empty" id="drop${i}" data-index="${i}" data-answer="${s[0]}"
+          style="left:${coords[i][0]}%;top:${coords[i][1]}%;"
+          ondragover="event.preventDefault()" ondrop="dropTerm(event,${i})" onclick="placeSelected(${i})"></div>`).join("")}
       </div>
 
-      <div id="summaryPanel"></div>
-      <div id="cardsPanel" style="display:none"></div>
-      <div id="pdfPanel" style="display:none"></div>
-    </section>
-  </div>
-
-  <script>
-    const topics = {
-      recht: {
-        title: "Einführung & juristische Grundlagen",
-        pdf: "01_Einfuerhung_und_jur._Grundlagen.pdf",
-        summarySubtitle: "Vollständige Lernzusammenfassung zum Lesen.",
-        cardsSubtitle: "Karteikartenmodus für das Wiederholen der prüfungsrelevanten Inhalte.",
-        pdfSubtitle: "Original-PDF direkt in der Seite mit Rücknavigation.",
-        summary: [
-          {
-            title: "1. Hierarchie der Umweltgesetzgebung",
-            points: [
-              "Die Umweltgesetzgebung ist hierarchisch aufgebaut. In der Präsentation werden Völkerrecht, EU-Recht, Bundesrecht und Landesrecht als Ebenen dargestellt.",
-              "Grundidee der Hierarchie: Höherrangiges Recht setzt den Rahmen für nachrangiges Recht.",
-              "Besonders wichtig für Klausuren ist die Einordnung, auf welcher Ebene eine Regelung angesiedelt ist und wie sie auf die darunterliegenden Ebenen wirkt."
-            ]
-          },
-          {
-            title: "2. Völkerrecht – Basler Übereinkommen",
-            points: [
-              "Als Beispiel für völkerrechtliche Regelungen wird das Basler Übereinkommen genannt.",
-              "Es behandelt die Kontrolle der grenzüberschreitenden Verbringung gefährlicher Abfälle und ihrer Entsorgung.",
-              "Genannt werden das Datum vom 22.03.1989, das Inkrafttreten am 05.05.1992 und die große Zahl der Vertragsparteien einschließlich der EU.",
-              "Für die Klausur wichtig: Das Basler Übereinkommen ist ein Beispiel dafür, wie internationales Recht im Umweltbereich konkrete Abfallströme und Entsorgungsfragen regelt."
-            ]
-          },
-          {
-            title: "3. Rechtsakte der Europäischen Union",
-            points: [
-              "Die Präsentation unterscheidet Verordnung, Richtlinie, Beschluss und Empfehlung.",
-              "Verordnung: unmittelbar rechtsverbindlich in allen Mitgliedstaaten. Es ist keine nationale Umsetzung erforderlich.",
-              "Richtlinie: muss fristgerecht in nationales Recht umgesetzt werden.",
-              "Beschluss: ist für die angesprochenen Mitgliedstaaten oder Unternehmen verbindlich.",
-              "Empfehlung: entfaltet keine bindende Wirkung.",
-              "Besonders klausurrelevant ist der Unterschied zwischen Verordnung und Richtlinie."
-            ]
-          },
-          {
-            title: "4. Nationales Recht und weitere Rechtsnormen",
-            points: [
-              "Unterhalb des EU-Rechts folgt das nationale Recht, insbesondere Bundesrecht und Landesrecht.",
-              "Die Folien betonen, dass Landesrecht über Bundesrecht hinausgehen darf, ihm aber nicht widersprechen darf.",
-              "Zusätzlich gibt es auf kommunaler Ebene weitere Regelungen bzw. vergleichbare normative Ebenen."
-            ]
-          },
-          {
-            title: "5. Untergesetzliches Regelwerk",
-            points: [
-              "Zum untergesetzlichen Regelwerk zählen ergänzende technische und verwaltungsnahe Regelwerke.",
-              "Genannt werden technische Regeln, technische Anleitungen wie TA Luft und TA Lärm sowie Richtlinien der gesetzlichen Unfallversicherung.",
-              "Diese Regelwerke konkretisieren gesetzliche Anforderungen und sind für die praktische Anwendung im Umweltbereich relevant."
-            ]
-          },
-          {
-            title: "6. Strafrechtlicher Umweltschutz",
-            points: [
-              "Die Präsentation verweist auf den 29. Abschnitt des Strafgesetzbuchs: Straftaten gegen die Umwelt.",
-              "Genannt werden unter anderem Gewässerverunreinigung (§ 324), Bodenverunreinigung (§ 324a), Luftverunreinigung (§ 325), unerlaubter Umgang mit Abfällen (§ 326), unerlaubtes Betreiben von Anlagen (§ 327) und der unerlaubte Umgang mit radioaktiven oder anderen gefährlichen Stoffen (§ 328).",
-              "Außerdem werden die Gefährdung schutzbedürftiger Gebiete (§ 329) sowie besonders schwere Fälle (§ 330) genannt.",
-              "Für die Klausur solltest du die Grundidee kennen: Umweltrecht ist nicht nur Verwaltungsrecht, sondern Verstöße können auch strafrechtlich relevant sein."
-            ]
-          }
-        ],
-        cards: [
-          ["Wie ist die Hierarchie der Umweltgesetzgebung aufgebaut?", "Völkerrecht → EU-Recht → Bundesrecht → Landesrecht."],
-          ["Welches Beispiel für Völkerrecht wird in der Präsentation genannt?", "Das Basler Übereinkommen."],
-          ["Was regelt das Basler Übereinkommen?", "Die Kontrolle der grenzüberschreitenden Verbringung gefährlicher Abfälle und ihrer Entsorgung."],
-          ["Was ist das Kennzeichen einer EU-Verordnung?", "Sie gilt unmittelbar rechtsverbindlich in allen Mitgliedstaaten."],
-          ["Was ist das Kennzeichen einer EU-Richtlinie?", "Sie muss fristgerecht in nationales Recht umgesetzt werden."],
-          ["Wie wirkt eine EU-Empfehlung?", "Sie hat keine bindende Wirkung."],
-          ["Für wen ist ein EU-Beschluss verbindlich?", "Für die angesprochenen Mitgliedstaaten oder Unternehmen."],
-          ["Was gilt für Landesrecht im Verhältnis zum Bundesrecht?", "Es darf über Bundesrecht hinausgehen, darf ihm aber nicht widersprechen."],
-          ["Was versteht man unter untergesetzlichem Regelwerk?", "Ergänzende technische und verwaltungsnahe Regelwerke wie technische Regeln, TA Luft, TA Lärm oder GUV-Richtlinien."],
-          ["Welche Umweltstraftat steht in § 324 StGB?", "Gewässerverunreinigung."],
-          ["Welche Umweltstraftat steht in § 324a StGB?", "Bodenverunreinigung."],
-          ["Welche Umweltstraftat steht in § 325 StGB?", "Luftverunreinigung."],
-          ["Worum geht es in § 326 StGB?", "Um den unerlaubten Umgang mit Abfällen."],
-          ["Worum geht es in § 327 StGB?", "Um das unerlaubte Betreiben von Anlagen."],
-          ["Worum geht es in § 328 StGB?", "Um den unerlaubten Umgang mit radioaktiven oder anderen gefährlichen Stoffen."],
-          ["Warum ist das Thema Umweltstrafrecht klausurrelevant?", "Weil Umweltverstöße nicht nur verwaltungsrechtliche Folgen haben können, sondern auch Straftaten sein können."]
-        ]
-      },
-
-      altlasten: {
-        title: "Altlastensanierung",
-        pdf: "02_Atlastensanierung.pdf",
-        summarySubtitle: "Vollständige Lernzusammenfassung zum Lesen.",
-        cardsSubtitle: "Karteikartenmodus für das Wiederholen der prüfungsrelevanten Inhalte.",
-        pdfSubtitle: "Original-PDF direkt in der Seite mit Rücknavigation.",
-        summary: [
-          {
-            title: "1. Ziele bzw. Maßnahmenrichtungen der Sanierung",
-            points: [
-              "Die Präsentation nennt drei zentrale Richtungen der Sanierung.",
-              "Erstens: Beseitigung oder Verminderung der Schadstoffe durch Dekontaminationsmaßnahmen.",
-              "Zweitens: langfristige Verhinderung oder Verminderung der Ausbreitung von Schadstoffen durch Sicherungsmaßnahmen, ohne dass die Schadstoffe zwingend beseitigt werden.",
-              "Drittens: Beseitigung oder Verminderung schädlicher Veränderungen der physikalischen, chemischen oder biologischen Bodenbeschaffenheit."
-            ]
-          },
-          {
-            title: "2. Sanierungsuntersuchung",
-            points: [
-              "Bei der Sanierungsuntersuchung werden alle wesentlichen Randbedingungen ermittelt.",
-              "Sie dient als Grundlage für das weitere Vorgehen und führt in ein Sanierungskonzept."
-            ]
-          },
-          {
-            title: "3. Sanierungskonzept",
-            points: [
-              "Das Sanierungskonzept beschreibt die angestrebten Sanierungsziele.",
-              "Es enthält Angaben zu Flächen, Teilflächen und Zonen.",
-              "Es bewertet die Eignung geplanter Maßnahmen.",
-              "Außerdem nennt es Schutz-, Beschränkungs- und Überwachungsmaßnahmen, Zulassungserfordernisse, Kosten sowie Anforderungen des Arbeitsschutzes."
-            ]
-          },
-          {
-            title: "4. Sanierungsplan",
-            points: [
-              "Der Sanierungsplan ist die planerisch durchgearbeitete Fassung des Konzepts und bildet die Grundlage für das Genehmigungsverfahren.",
-              "Er enthält zusätzlich eine Gefährdungsabschätzung, Angaben zur bisherigen und künftigen Nutzung sowie Aspekte der Nachsorge und Langzeitüberwachung.",
-              "Für die Klausur ist der Unterschied wichtig: Das Konzept strukturiert und begründet die Maßnahmen, der Plan ist die konkrete genehmigungsfähige Ausarbeitung."
-            ]
-          },
-          {
-            title: "5. Arten von Sanierungsmaßnahmen",
-            points: [
-              "Verwaltungsmaßnahmen: Zum Beispiel Umwidmung einer Fläche auf eine weniger sensible Nutzung.",
-              "Sicherungsmaßnahmen: Zum Beispiel bautechnische Sperren gegen die Ausbreitung von Schadstoffen.",
-              "Umlagerung: Schadstoffhaltiges Material wird ausgebaut und an anderer Stelle wieder eingebaut.",
-              "Dekontamination: Schadstoffe werden entfernt oder vermindert.",
-              "Sanierung über Selbstreinigung mit Überwachung: zum Beispiel mikrobieller Abbau bis unter einen Grenzwert."
-            ]
-          },
-          {
-            title: "6. Bodenreinigungsverfahren",
-            points: [
-              "Die Präsentation nennt elektrokinetische Sanierung, thermische Verfahren, chemisch-physikalische Verfahren, Bodenwaschverfahren, Bodenluftabsaugung, Immobilisierungsverfahren und mikrobiologische Verfahren.",
-              "Zusätzliche Einordnungen sind in situ und ex situ sowie on site und off site.",
-              "Für die Klausur solltest du die Verfahren benennen und grob zuordnen können."
-            ]
-          }
-        ],
-        cards: [
-          ["Welche drei grundlegenden Richtungen der Altlastensanierung werden genannt?", "Dekontamination, Sicherung gegen Ausbreitung und Beseitigung bzw. Verminderung schädlicher Veränderungen der Bodenbeschaffenheit."],
-          ["Was ist Dekontamination?", "Die Beseitigung oder Verminderung von Schadstoffen."],
-          ["Was ist das Ziel von Sicherungsmaßnahmen?", "Die langfristige Verhinderung oder Verminderung der Ausbreitung von Schadstoffen, ohne sie zwingend zu beseitigen."],
-          ["Was passiert in der Sanierungsuntersuchung?", "Alle wesentlichen Randbedingungen werden ermittelt."],
-          ["Wozu führt die Sanierungsuntersuchung?", "Zu einem Sanierungskonzept."],
-          ["Was beschreibt das Sanierungskonzept?", "Die Sanierungsziele und die geplanten Maßnahmen mit Flächenangaben, Eignung, Schutz- und Überwachungsmaßnahmen, Zulassungserfordernissen, Kosten und Arbeitsschutz."],
-          ["Wozu dient der Sanierungsplan?", "Er ist die planerisch durchgearbeitete, genehmigungsbezogene Grundlage des Verfahrens."],
-          ["Was ist der Unterschied zwischen Sanierungskonzept und Sanierungsplan?", "Das Konzept strukturiert und begründet die Maßnahmen, der Plan ist die konkrete genehmigungsfähige Ausarbeitung."],
-          ["Was ist ein Beispiel für eine Verwaltungsmaßnahme?", "Die Umwidmung einer Fläche auf eine weniger sensible Nutzung."],
-          ["Was ist ein Beispiel für eine Sicherungsmaßnahme?", "Der Einbau von bautechnischen Sperren gegen die Ausbreitung der Schadstoffe."],
-          ["Was versteht man unter Umlagerung?", "Schadstoffhaltiges Material wird ausgebaut und an anderer Stelle wieder eingebaut."],
-          ["Was bedeutet Sanierung über Selbstreinigung mit Überwachung?", "Zum Beispiel mikrobieller Abbau bis unter einen Grenzwert unter kontrollierten Bedingungen."],
-          ["Nenne vier Bodenreinigungsverfahren.", "Zum Beispiel elektrokinetische Sanierung, thermische Verfahren, Bodenwaschverfahren und Bodenluftabsaugung."],
-          ["Was bedeutet in situ?", "Behandlung am Ort der Belastung."],
-          ["Was bedeutet ex situ?", "Behandlung nach Ausbau außerhalb des ursprünglichen Ortes."],
-          ["Warum ist der Unterschied zwischen Dekontamination und Sicherung wichtig?", "Weil Dekontamination Schadstoffe entfernt oder vermindert, während Sicherung vor allem ihre Ausbreitung verhindert."]
-        ]
-      }
-    };
-
-    let currentTopicKey = null;
-    let currentMode = "summary";
-    let cardIndex = 0;
-    let showAnswer = false;
-
-    function openTopic(topicKey, mode){
-      currentTopicKey = topicKey;
-      currentMode = mode;
-      cardIndex = 0;
-      showAnswer = false;
-
-      document.getElementById("homeView").classList.remove("active");
-      document.getElementById("topicView").classList.add("active");
-
-      const topic = topics[topicKey];
-      document.getElementById("topicTitle").textContent = topic.title;
-
-      renderMode();
-    }
-
-    function goHome(){
-      document.getElementById("topicView").classList.remove("active");
-      document.getElementById("homeView").classList.add("active");
-    }
-
-    function renderMode(){
-      const topic = topics[currentTopicKey];
-      const summaryPanel = document.getElementById("summaryPanel");
-      const cardsPanel = document.getElementById("cardsPanel");
-      const pdfPanel = document.getElementById("pdfPanel");
-      const subtitle = document.getElementById("topicSubtitle");
-
-      summaryPanel.style.display = "none";
-      cardsPanel.style.display = "none";
-      pdfPanel.style.display = "none";
-
-      if(currentMode === "summary"){
-        subtitle.textContent = topic.summarySubtitle;
-        summaryPanel.style.display = "block";
-        summaryPanel.innerHTML = `
-          <div class="button-row" style="margin-bottom:16px">
-            <button class="primary" onclick="switchMode('summary')">Zusammenfassung</button>
-            <button class="secondary" onclick="switchMode('cards')">Karteikarten</button>
-            <button class="accent" onclick="switchMode('pdf')">PDF öffnen</button>
-          </div>
-          ${topic.summary.map(section => `
-            <div class="summary-section">
-              <h3>${section.title}</h3>
-              <ul>
-                ${section.points.map(point => `<li>${point}</li>`).join("")}
-              </ul>
-            </div>
-          `).join("")}
-        `;
-      }
-
-      if(currentMode === "cards"){
-        subtitle.textContent = topic.cardsSubtitle;
-        cardsPanel.style.display = "block";
-        renderCardsPanel();
-      }
-
-      if(currentMode === "pdf"){
-        subtitle.textContent = topic.pdfSubtitle;
-        pdfPanel.style.display = "block";
-        pdfPanel.innerHTML = `
-          <div class="button-row" style="margin-bottom:16px">
-            <button class="secondary" onclick="switchMode('summary')">Zusammenfassung</button>
-            <button class="secondary" onclick="switchMode('cards')">Karteikarten</button>
-            <button class="accent" onclick="window.open('${topic.pdf}','_blank')">PDF in neuem Tab öffnen</button>
-          </div>
-          <div class="pdf-frame-wrap">
-            <iframe class="pdf-frame" src="${topic.pdf}"></iframe>
-          </div>
-        `;
-      }
-    }
-
-    function switchMode(mode){
-      currentMode = mode;
-      renderMode();
-    }
-
-    function renderCardsPanel(){
-      const topic = topics[currentTopicKey];
-      const cardsPanel = document.getElementById("cardsPanel");
-      const total = topic.cards.length;
-      const progress = ((cardIndex + 1) / total) * 100;
-      const pair = topic.cards[cardIndex];
-      const label = showAnswer ? "Antwort" : "Frage";
-      const text = showAnswer ? pair[1] : pair[0];
-
-      cardsPanel.innerHTML = `
-        <div class="button-row" style="margin-bottom:16px">
-          <button class="secondary" onclick="switchMode('summary')">Zusammenfassung</button>
-          <button class="primary" onclick="switchMode('cards')">Karteikarten</button>
-          <button class="accent" onclick="switchMode('pdf')">PDF öffnen</button>
+      <div class="label-bank">
+        <h3>Begriffe</h3>
+        <div class="term-list" id="termList">
+          ${t.gameTerms.map(term=>`<div class="term-chip" id="term-${safeId(term)}" draggable="true" onclick="selectTerm('${term}')" ondragstart="dragTerm(event,'${term}')">${term}</div>`).join("")}
         </div>
+      </div>
+    </div>
 
-        <div class="cards-shell">
-          <div class="progress-row">
-            <span>Karte ${cardIndex + 1} von ${total}</span>
-            <span>${Math.round(progress)}%</span>
-          </div>
-          <div class="progress"><div style="width:${progress}%"></div></div>
+    <div class="button-row" style="margin-top:16px">
+      <button class="secondary" onclick="resetGame()">Zurücksetzen</button>
+      <button class="primary" onclick="checkGame()">Lösung prüfen</button>
+      <button class="accent" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
 
-          <div class="flashcard" onclick="flipCard()">
-            <small>${label}</small>
-            <div class="text">${text}</div>
-            <div class="hint">Zum Umdrehen antippen</div>
-          </div>
+    <div class="legend">
+      <span><span class="sample-box"></span> Noch nicht geprüft</span>
+      <span><span class="sample-box ok"></span> Richtig</span>
+      <span><span class="sample-box bad"></span> Falsch</span>
+    </div>
+    <div id="gameResult" class="result"></div>
+  </div>`;
+  selectedTerm=null;
+}
 
-          <div class="button-row">
-            <button class="secondary" onclick="prevCard()">Vorherige Karte</button>
-            <button class="primary" onclick="flipCard()">Umdrehen</button>
-            <button class="accent" onclick="nextCard()">Nächste Karte</button>
-          </div>
+let selectedTerm=null;
 
-          <div class="pill">Alle Karteikarten stammen aus dem jeweiligen PDF-Thema.</div>
-        </div>
-      `;
+function safeId(text){
+  return text.replaceAll("ä","ae").replaceAll("ö","oe").replaceAll("ü","ue").replaceAll("ß","ss").replace(/[^a-zA-Z0-9]/g,"_");
+}
+
+function selectTerm(term){
+  selectedTerm=term;
+  document.querySelectorAll(".term-chip").forEach(c=>c.classList.remove("active"));
+  const chip=document.getElementById("term-"+safeId(term));
+  if(chip && !chip.classList.contains("used")) chip.classList.add("active");
+}
+
+function dragTerm(event,term){
+  event.dataTransfer.setData("text/plain",term);
+}
+
+function dropTerm(event,index){
+  event.preventDefault();
+  const term=event.dataTransfer.getData("text/plain");
+  setDrop(index,term);
+}
+
+function placeSelected(index){
+  if(!selectedTerm) return;
+  setDrop(index,selectedTerm);
+  selectedTerm=null;
+  document.querySelectorAll(".term-chip").forEach(c=>c.classList.remove("active"));
+}
+
+function setDrop(index,term){
+  if(!term) return;
+  const zone=document.getElementById("drop"+index);
+
+  // Vorherigen Begriff im Feld wieder freigeben
+  const old=zone.dataset.value;
+  if(old){
+    const oldChip=document.getElementById("term-"+safeId(old));
+    if(oldChip) oldChip.classList.remove("used");
+  }
+
+  // Begriff aus einem anderen Feld entfernen
+  document.querySelectorAll(".dropzone").forEach(z=>{
+    if(z.dataset.value===term){
+      z.dataset.value="";
+      z.textContent="";
+      z.classList.add("empty");
+      z.classList.remove("correct","wrong");
     }
+  });
 
-    function flipCard(){
-      showAnswer = !showAnswer;
-      renderCardsPanel();
-    }
+  zone.dataset.value=term;
+  zone.textContent=term;
+  zone.classList.remove("empty","correct","wrong");
 
-    function nextCard(){
-      const total = topics[currentTopicKey].cards.length;
-      cardIndex = (cardIndex + 1) % total;
-      showAnswer = false;
-      renderCardsPanel();
-    }
+  const chip=document.getElementById("term-"+safeId(term));
+  if(chip) chip.classList.add("used");
+}
 
-    function prevCard(){
-      const total = topics[currentTopicKey].cards.length;
-      cardIndex = (cardIndex - 1 + total) % total;
-      showAnswer = false;
-      renderCardsPanel();
-    }
-  </script>
+function checkGame(){
+  const t=topics[currentTopicKey];let correct=0;
+  t.gameSlots.forEach((s,i)=>{
+    const zone=document.getElementById("drop"+i);
+    zone.classList.remove("correct","wrong");
+    if(zone.dataset.value===s[0]){zone.classList.add("correct");correct++;}
+    else{zone.classList.add("wrong");}
+  });
+  const res=document.getElementById("gameResult");
+  res.className="result "+(correct===t.gameSlots.length?"ok":"bad");
+  res.textContent=`${correct} von ${t.gameSlots.length} richtig.`;
+}
+
+function showSolution(){
+  const t=topics[currentTopicKey];
+  t.gameSlots.forEach((s,i)=>setDrop(i,s[0]));
+  document.querySelectorAll(".dropzone").forEach(z=>{z.classList.remove("wrong");z.classList.add("correct");});
+  const res=document.getElementById("gameResult");
+  res.className="result ok";
+  res.textContent="Lösung angezeigt.";
+}
+
+function resetGame(){renderGamePanel();}
+
+initHome();
+</script>
 </body>
 </html>
